@@ -1,4 +1,4 @@
-# Neighborhood Map API
+# Subway Map API
 
 This Knockout application provides a map of New York City's subway stations.
 
