@@ -33,6 +33,57 @@ var ViewModel = function() {
     that.locationsList.push(new Location(locationItem));
   });
 
+  foursquare_url = 'https://api.foursquare.com/v2/venues/search?near=New%20York,NY';
+  foursquare_client_id = '&client_id=H5KKDQATDVABW3XSDBQ043GVRIQYCUII1SHKUAOVK2MUNA0P';
+  foursquare_client_secret = '&client_secret=L5WYBLGJSGG4OCC4AJ5XAIWDIPM1DJRCVWZSRWAKOFJVQKUN';
+  foursquare_query = '&query=bagels';
+  foursquare_version = '&v=20170120'
+  foursquare_mode = '&m=swarm'
+  foursquare_api_call = foursquare_url + foursquare_query + foursquare_version + foursquare_mode + foursquare_client_id + foursquare_client_secret;
+
+  this.foursquareLocations = ko.observableArray([]);
+
+  $.getJSON(foursquare_api_call, function(data) {
+    topFiveVenues = data.response.venues.slice(0,5);
+    data.response.venues.slice(0,5).forEach(function(venue) {
+      that.foursquareLocations.push({
+        "title": venue.name,
+        "lat": venue.location.lat,
+        "lng": venue.location.lng,
+        "lng": venue.location.lng,
+        "content": venue.categories[0].name,
+        "attribution": venue.url||"https://www.google.com/#safe=off&q=" + venue.name + " " + venue.location.address
+      });
+    });
+  });
+
+  this.searchQuery = ko.observable("");
+  this.filtered = ko.computed(function() {
+    var locationsArray = that.foursquareLocations();
+    return ko.utils.arrayFilter(locationsArray, function(location) {
+      if (location.title.toLowerCase().includes(that.searchQuery().toLowerCase())) {
+        return location
+      }
+    })
+  })
+
+
+  // this.searchInput.bind('keypress', function() {
+  //   if (that.searchQuery() != null) {
+  //     that.locationsList = []
+  //       initialLocations.forEach(function(locationItem) {
+  //         if (locationItem.title.indexOf(that.searchQuery()) != -1) {
+  //           that.locationsList.push(new Location(locationItem));
+  //         }
+  //       ko.bindingHandlers.map.init
+  //         // console.log(locationItem.title if locationItem.title.contains())
+  //       })
+  //     // that.locationsList = that.locationsList.filter(function(locationItem) {
+  //     //   return locationItem.title().includes(that.searchQuery());
+  //     // })
+  //   }
+  // })
+
   // Google Maps
   ko.bindingHandlers.map = {
     init: function (element) {

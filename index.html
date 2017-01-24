@@ -14,9 +14,23 @@
 </head>
 <body>
 
+    <ul data-bind="foreach: filtered">
+        <li data-bind="text: title"></li>
+    </ul>
+
+    <ul data-bind="foreach: initialLocations">
+        <li data-bind="text: title"></li>
+    </ul>
+
+
+    <input type="text" data-bind="textInput: searchQuery" name="search" placeholder="Search"><br><br>
+    <h1 data-bind="text: searchQuery"></h1>
     <div class="map" data-bind="map"></div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAc7fli5raBLzaXp01lIQwP1mxUhpQp0s0"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+ 
+
     <script src="js/lib/knockout-3.2.0.js"></script>
     <script src="js/app.js"></script>
 </body>
