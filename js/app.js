@@ -58,7 +58,7 @@ var ViewModel = function() {
   });
 
   this.searchQuery = ko.observable("");
-  this.filtered = ko.computed(function() {
+  this.filteredLocations = ko.computed(function() {
     var locationsArray = that.foursquareLocations();
     return ko.utils.arrayFilter(locationsArray, function(location) {
       if (location.title.toLowerCase().includes(that.searchQuery().toLowerCase())) {
@@ -66,23 +66,6 @@ var ViewModel = function() {
       }
     })
   })
-
-
-  // this.searchInput.bind('keypress', function() {
-  //   if (that.searchQuery() != null) {
-  //     that.locationsList = []
-  //       initialLocations.forEach(function(locationItem) {
-  //         if (locationItem.title.indexOf(that.searchQuery()) != -1) {
-  //           that.locationsList.push(new Location(locationItem));
-  //         }
-  //       ko.bindingHandlers.map.init
-  //         // console.log(locationItem.title if locationItem.title.contains())
-  //       })
-  //     // that.locationsList = that.locationsList.filter(function(locationItem) {
-  //     //   return locationItem.title().includes(that.searchQuery());
-  //     // })
-  //   }
-  // })
 
   // Google Maps
   ko.bindingHandlers.map = {
@@ -104,7 +87,7 @@ var ViewModel = function() {
         map = new google.maps.Map(element, mapOptions);
 
         // Instantiate a marker for each item in locationsList.
-        console.log(that.locationsList().length)
+        console.log(that.foursquareLocations().length)
 
         for (i = 0; i < that.locationsList().length; i++) { 
           locationItem = that.locationsList()[i]
