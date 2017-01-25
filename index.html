@@ -5,7 +5,7 @@
     <title>Subway Map API</title>
     <style>
       .map {
-        width: 100%;
+        width: 40%;
         height: 400px;
         background-color: grey;
       }
@@ -16,10 +16,6 @@
 
     <ul data-bind="foreach: {data: filteredLocations, as: 'location'}">
         <li data-bind="text: location.title"></li>
-    </ul>
-
-    <ul data-bind="foreach: initialLocations">
-        <li data-bind="text: title"></li>
     </ul>
 
     <input type="text" data-bind="textInput: searchQuery" placeholder="Search"><br><br>
