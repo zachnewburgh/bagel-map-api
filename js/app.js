@@ -128,7 +128,7 @@ var ViewModel = function() {
   ko.bindingHandlers.map = {
     init: function(element) {
 
-      // Retrieve the first item in the locationsList and store it in centerLocation object.
+      // Assign Washington Square Park as the center location.
       centerLocation = {
         lat: 40.7312,
         lng: -73.9971
