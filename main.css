@@ -3,7 +3,9 @@ body {
 }
 
 #map {
-  width: 100%;
+  position: absolute;
+  right: 0;
+  width: 73%;
   height: 100vh;
   background-color: grey;
 }
