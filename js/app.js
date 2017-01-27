@@ -124,27 +124,6 @@ var ViewModel = function() {
     selectedMarkerActions(marker);
   }
 
-  // Google Maps
-  ko.bindingHandlers.map = {
-    init: function(element) {
-
-      // Assign Washington Square Park as the center location.
-      centerLocation = {
-        lat: 40.7312,
-        lng: -73.9971
-      };
-
-      // Set the map's center to centerLocation object.
-      mapOptions = {
-        zoom: 13,
-        center: centerLocation
-      };
-
-      // Instantiate map.
-      map = new google.maps.Map(element, mapOptions);
-    }
-  };
-
 };
     
 ko.applyBindings(new ViewModel);
