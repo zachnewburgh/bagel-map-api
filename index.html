@@ -13,10 +13,17 @@
 
 </head>
 <body>
+    <!-- ko if: locationsList().length > 0 -->
+        <ul data-bind="foreach: {data: filteredLocations, as: 'location'}">
+            <li data-bind="text: location.title, click: $parent.selectMarker"></li>
+        </ul>
+    <!-- /ko -->
 
-    <ul data-bind="foreach: {data: filteredLocations, as: 'location'}">
-        <li data-bind="text: location.title, click: $parent.selectMarker"></li>
-    </ul>
+    <!-- ko if: locationsList().length === 0 -->
+        <h1>"There was an error retrieving data from Foursquare's API."</h1>
+    <!-- /ko -->
+
+
 
     <input type="text" data-bind="textInput: searchQuery" placeholder="Search"><br><br>
     <h1 data-bind="text: searchQuery"></h1>
