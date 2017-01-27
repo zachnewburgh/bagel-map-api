@@ -27,6 +27,7 @@ body {
   color: white;
   font-family: Verdana;
   overflow: auto;
+  width: 30%;
 }
 
 input {
