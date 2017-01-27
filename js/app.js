@@ -45,14 +45,18 @@ var Location = function(data) {
   // On click, show/hide the marker's infowindow
   // and start/stop the marker's bounce animation.
   this.marker.addListener('click', function() {
+    selectedMarkerActions(this)
+  });
+
+  selectedMarkerActions = function(marker) {
     closeLastOpenedInfowindow();
-    this.infowindow.open(map, this);
-    lastOpenedInfowindow = this.infowindow;
+    marker.infowindow.open(map, marker);
+    lastOpenedInfowindow = marker.infowindow;
 
     stopLastMarkerBounce();
-    this.setAnimation(google.maps.Animation.BOUNCE);
-    lastMarkerBounce = this;
-  });
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    lastMarkerBounce = marker;
+  }
 
   // Close all other infowindows when another is clicked.
   lastOpenedInfowindow = ""
@@ -113,6 +117,13 @@ var ViewModel = function() {
     });
   });
 
+  // When clicking on a location in the list,
+  // make the relevant marker bounce and infowindow open.
+  this.selectMarker = function(locationItem) {
+    let marker = locationItem.marker;
+    selectedMarkerActions(marker);
+  }
+
   // Google Maps
   ko.bindingHandlers.map = {
     init: function(element) {
@@ -133,7 +144,7 @@ var ViewModel = function() {
       map = new google.maps.Map(element, mapOptions);
     }
   };
-  
+
 };
     
 ko.applyBindings(new ViewModel);

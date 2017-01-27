@@ -15,7 +15,7 @@
 <body>
 
     <ul data-bind="foreach: {data: filteredLocations, as: 'location'}">
-        <li data-bind="text: location.title"></li>
+        <li data-bind="text: location.title, click: $parent.selectMarker"></li>
     </ul>
 
     <input type="text" data-bind="textInput: searchQuery" placeholder="Search"><br><br>
