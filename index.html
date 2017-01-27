@@ -6,20 +6,21 @@
     <title>Subway Map API</title>
 </head>
 <body>
-    <!-- ko if: locationsList().length > 0 -->
-        <ul data-bind="foreach: {data: filteredLocations, as: 'location'}">
-            <li data-bind="text: location.title, click: $parent.selectMarker"></li>
-        </ul>
-    <!-- /ko -->
 
+    <div id="panel">
+        <input type="text" data-bind="textInput: searchQuery" placeholder="Search"><br><br>
+        <!-- ko if: locationsList().length > 0 -->
+            <ul data-bind="foreach: {data: filteredLocations, as: 'location'}">
+                <li data-bind="text: location.title, click: $parent.selectMarker"></li>
+            </ul>
+        <!-- /ko -->
+    </div>
+
+    <div id="error">
     <!-- ko if: locationsList().length === 0 -->
         <h1>"There was an error retrieving data from Foursquare's API."</h1>
     <!-- /ko -->
-
-
-
-    <input type="text" data-bind="textInput: searchQuery" placeholder="Search"><br><br>
-    <h1 data-bind="text: searchQuery"></h1>
+    </div>
 
     <div class="map" data-bind="map"></div>
 

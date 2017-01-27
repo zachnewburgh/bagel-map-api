@@ -88,7 +88,7 @@ var ViewModel = function() {
   fs_call = fs_base + fs_query + fs_version + fs_mode + fs_id + fs_secret;
 
   $.getJSON(fs_call, function(data) {
-    data.response.venues.slice(0,5).forEach(function(venue) {
+    data.response.venues.slice(0,30).forEach(function(venue) {
       locationsList.push(new Location({
         "title": venue.name,
         "lat": venue.location.lat,
@@ -130,13 +130,13 @@ var ViewModel = function() {
 
       // Retrieve the first item in the locationsList and store it in centerLocation object.
       centerLocation = {
-        lat: 40.7590,
-        lng: -73.9845
+        lat: 40.7312,
+        lng: -73.9971
       };
 
       // Set the map's center to centerLocation object.
       mapOptions = {
-        zoom: 12,
+        zoom: 13,
         center: centerLocation
       };
 
