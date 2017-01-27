@@ -1,28 +1,89 @@
 var locationsList = ko.observableArray([]);
 
 var Location = function(data) {
+  that = this;
+
   this.lat = ko.observable(data.lat);
   this.lng = ko.observable(data.lng);
   this.title = ko.observable(data.title);
   this.content = ko.observable(data.content);
   this.attribution = ko.observable(data.attribution);
-}
+
+  this.contentString = 
+    '<div class="content">'+
+    '<h1 id="' + that.title() + '" class="firstHeading">' + that.title() + '</h1>'+
+    '<dataiv class="bodyContent">'+
+    '<p>' + that.content() + '</p>'+
+    '<p>Attribution: ' + that.title() + 
+    ', <a href="' + that.attribution() + '">' + that.attribution() + '</a>' +
+    '</div>'+
+    '</div>';
+
+  // Create an infowindow for each location.
+  this.infowindow = new google.maps.InfoWindow({
+    content: that.contentString
+  });
+  
+  // Create an object with lat and lng for each locationItem.
+  this.markerLocation = {
+    lat: that.lat(),
+    lng: that.lng()
+  };
+
+  // Instantiate a new marker for each locationItem.
+  this.marker = new google.maps.Marker({
+    title: that.title(),
+    position: that.markerLocation,
+    map: map,
+    infowindow: that.infowindow,
+    animation: google.maps.Animation.DROP
+  });
+
+  // Hide the marker from the map.
+  this.marker.setVisible(false);
+
+  // On click, show/hide the marker's infowindow
+  // and start/stop the marker's bounce animation.
+  this.marker.addListener('click', function() {
+    closeLastOpenedInfowindow();
+    this.infowindow.open(map, this);
+    lastOpenedInfowindow = this.infowindow;
+
+    stopLastMarkerBounce();
+    this.setAnimation(google.maps.Animation.BOUNCE);
+    lastMarkerBounce = this;
+  });
+
+  // Close all other infowindows when another is clicked.
+  lastOpenedInfowindow = ""
+  closeLastOpenedInfowindow = function() {
+    if (lastOpenedInfowindow) {
+      lastOpenedInfowindow.close();
+    };
+  };
+
+  // Stop inactive markers from bouncing.
+  lastMarkerBounce = ""
+  stopLastMarkerBounce = function() {
+    if (lastMarkerBounce) {
+      lastMarkerBounce.setAnimation(null);
+    };
+  };
+
+};
 
 var ViewModel = function() {
   var that = this;
 
-  foursquare_url = 'https://api.foursquare.com/v2/venues/search?near=New%20York,NY';
-  foursquare_client_id = '&client_id=H5KKDQATDVABW3XSDBQ043GVRIQYCUII1SHKUAOVK2MUNA0P';
-  foursquare_client_secret = '&client_secret=L5WYBLGJSGG4OCC4AJ5XAIWDIPM1DJRCVWZSRWAKOFJVQKUN';
-  foursquare_query = '&query=bagels';
-  foursquare_version = '&v=20170120'
-  foursquare_mode = '&m=swarm'
-  foursquare_api_call = foursquare_url + foursquare_query + foursquare_version + foursquare_mode + foursquare_client_id + foursquare_client_secret;
+  fs_base = 'https://api.foursquare.com/v2/venues/search?near=New%20York,NY';
+  fs_id = '&client_id=H5KKDQATDVABW3XSDBQ043GVRIQYCUII1SHKUAOVK2MUNA0P';
+  fs_secret = '&client_secret=L5WYBLGJSGG4OCC4AJ5XAIWDIPM1DJRCVWZSRWAKOFJVQKUN';
+  fs_query = '&query=bagels';
+  fs_version = '&v=20170120';
+  fs_mode = '&m=swarm';
+  fs_call = fs_base + fs_query + fs_version + fs_mode + fs_id + fs_secret;
 
-  this.foursquareLocations = ko.observableArray([]);
-
-  $.getJSON(foursquare_api_call, function(data) {
-    topFiveVenues = data.response.venues.slice(0,5);
+  $.getJSON(fs_call, function(data) {
     data.response.venues.slice(0,5).forEach(function(venue) {
       locationsList.push(new Location({
         "title": venue.name,
@@ -30,94 +91,49 @@ var ViewModel = function() {
         "lng": venue.location.lng,
         "lng": venue.location.lng,
         "content": venue.categories[0].name,
-        "attribution": venue.url||"https://www.google.com/#safe=off&q=" + venue.name + " " + venue.location.address
+        "attribution": venue.url||'https://www.google.com/#safe=off&q=' + venue.name + ' ' + venue.location.address
       }));
     });
   });
 
+  // Links with the text input. 
   this.searchQuery = ko.observable("");
+
+  // Filter locations based on searchQuery and
+  // set marker's visibility based on filter.
   this.filteredLocations = ko.computed(function() {
     var locationsArray = locationsList();
-    return ko.utils.arrayFilter(locationsArray, function(location) {
-      if (location.title().toLowerCase().includes(that.searchQuery().toLowerCase())) {
-        return location
-      }
-    })
-  })
+    return ko.utils.arrayFilter(locationsArray, function(locationItem) {
+      if (locationItem.title().toLowerCase().includes(that.searchQuery().toLowerCase())) {
+        locationItem.marker.setVisible(true);
+        return locationItem
+      } else {
+        locationItem.marker.setVisible(false);
+      };
+    });
+  });
 
   // Google Maps
   ko.bindingHandlers.map = {
-    init: function (element) {
-        // Retrieve the first item in the locationsList and store it in centerLocation object.
-        centerLocation = {
-          lat: 40.7590,
-          lng: -73.9845
-        }
+    init: function(element) {
 
-        // Set the map's center to centerLocation object.
-        mapOptions = {
-            zoom: 12,
-            center: centerLocation
-        }
-
-        // Instantiate map.
-        map = new google.maps.Map(element, mapOptions);
-    },
-
-    update: function(element) {
-      // Iterate over the items in the locationsList array.
-      for (i = 0; i < locationsList().length; i++) { 
-        locationItem = locationsList()[i]
-
-        contentString = '<div class="content">'+
-          '<div class="siteNotice">'+
-          '</div>'+
-          '<h1 id="' + locationItem.title() + '" class="firstHeading">' + locationItem.title() + '</h1>'+
-          '<div class="bodyContent">'+
-          '<p>' + locationItem.content() + '</p>'+
-          '<p>Attribution: ' + locationItem.title() + 
-          ', <a href="' + locationItem.attribution() + '">' +
-          locationItem.attribution() +
-          '</a> (last visited June 22, 2009).</p>'+
-          '</div>'+
-          '</div>';
-
-        // Create an infowindow for each location.
-        infowindow = new google.maps.InfoWindow({
-          content: contentString
-        });
-        
-        // Create an object with lat and lng for each locationItem.
-        markerLocation = {
-          lat: locationItem.lat(),
-          lng: locationItem.lng()
-        }
-        // Instantiate a new marker for each locationItem.
-        marker = new google.maps.Marker({
-          position: markerLocation,
-          map: map,
-          infowindow: infowindow
-
-        });
-
-        // Close all other infowindows when another is clicked.
-        lastOpenedInfowindow = ''
-
-        closeLastOpenedInfowindow = function() {
-          if (lastOpenedInfowindow) {
-            lastOpenedInfowindow.close();
-          }
-        }
-
-        // Provide markers with infowindow upon click.
-        google.maps.event.addListener(marker, 'click', function() {
-          closeLastOpenedInfowindow();
-          this.infowindow.open(map, this);
-          lastOpenedInfowindow = this.infowindow;
-        });          
+      // Retrieve the first item in the locationsList and store it in centerLocation object.
+      centerLocation = {
+        lat: 40.7590,
+        lng: -73.9845
       };
-  }
+
+      // Set the map's center to centerLocation object.
+      mapOptions = {
+        zoom: 12,
+        center: centerLocation
+      };
+
+      // Instantiate map.
+      map = new google.maps.Map(element, mapOptions);
+    }
   };
-}
+  
+};
     
 ko.applyBindings(new ViewModel);
