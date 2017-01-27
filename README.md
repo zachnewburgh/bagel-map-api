@@ -1,6 +1,6 @@
-# Subway Map API
+# Bagel Map API
 
-This Knockout application provides a map of New York City's subway stations.
+This Knockout application provides a map of New York City's top bagel shops by using the APIs from Foursquare and Google Maps.
 
 ## Installation
 
