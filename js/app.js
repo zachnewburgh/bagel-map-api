@@ -45,7 +45,7 @@ var Location = function(data) {
   // On click, show/hide the marker's infowindow
   // and start/stop the marker's bounce animation.
   that.marker.addListener('click', function() {
-    selectedMarkerActions(this)
+    selectedMarkerActions(this);
   });
 
   selectedMarkerActions = function(marker) {
@@ -56,7 +56,7 @@ var Location = function(data) {
     stopLastMarkerBounce();
     marker.setAnimation(google.maps.Animation.BOUNCE);
     lastMarkerBounce = marker;
-  }
+  };
 
   // Close all other infowindows when another is clicked.
   lastOpenedInfowindow = ""
@@ -134,7 +134,7 @@ var ViewModel = function() {
   that.selectMarker = function(locationItem) {
     let marker = locationItem.marker;
     selectedMarkerActions(marker);
-  }
+  };
 
 };
     
